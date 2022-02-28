@@ -1,0 +1,359 @@
+// Project Two BST.cpp
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <vector>
+using namespace std;
+
+
+
+//structure for holding class info
+struct Course {
+    string courseId;
+    string courseName;
+    vector<string> prereqs;
+};
+
+//structure for BST nodes
+struct Node{
+    Course course;
+    Node* leftChild;
+    Node* rightChild;
+
+    Node() { //Default constructor
+        this->leftChild = nullptr;
+        this->rightChild = nullptr;
+    }
+    Node(Course aCourse) : Node() { //OVERLOAD constructor
+        this->course = aCourse;
+    }
+
+    void Print(string instruction) { //variable print method on all nodes
+        if (instruction == "debug") {
+            cout << "this node pointer =" << this->course.courseId << endl; //DEBUG print
+        }
+        cout << course.courseId << ", ";
+        cout << course.courseName;
+        if (instruction == "neat") { //space if not printing prereqs
+            cout << endl;
+        }
+        if (instruction == "prereqs") { //If you want prereqs listed
+            
+            for (auto&& prereq : course.prereqs) { //For each equivalent
+                if (prereq == course.prereqs.back()) {
+                    cout << prereq << endl; //space if at end
+                }
+                else {
+                    cout <<  prereq << ", "; //If not last, print ", "
+                }
+            }
+        }
+        if (instruction == "debug") { //Debug info to help draw BST structure
+            if (this->leftChild != nullptr) { cout << "leftChild =" << leftChild->course.courseId << endl; } //DEBUG print
+            cout << "leftChild =" << leftChild << endl; //DEBUG print
+            if (this->rightChild != nullptr) { cout << "rightChild =" << rightChild->course.courseId << endl; } //DEBUG print
+            cout << "rightChild =" << rightChild << endl; //DEBUG print
+        }
+    }
+};
+
+
+//underlying BST structure
+class BinarySearchTree {
+
+private:
+    //Node* RemoveNode(Node* node, string courseId); //FIXME create if needed
+
+    void Destruct(Node* node);
+
+public:
+    Node* the_BST_root;
+    BinarySearchTree(); //Default constructor
+    BinarySearchTree(Course rootCourse); //OVERLOAD constructor
+    virtual ~BinarySearchTree();
+    void Insert(BinarySearchTree* tree, Node* thisNode);
+    //void Remove(string courseId); //FIXME create if needed
+    void Search(string courseId);
+    void PrintCourses(Node* node);
+};
+
+BinarySearchTree::BinarySearchTree() { //Constructor
+    the_BST_root = nullptr;
+};
+
+BinarySearchTree::BinarySearchTree(Course rootCourse) { //OVERLOAD constructor
+    the_BST_root->course = rootCourse;
+};
+
+BinarySearchTree::~BinarySearchTree() {
+    Destruct(the_BST_root);
+};
+
+
+void BinarySearchTree::Destruct(Node* the_node) {
+    if (the_node != nullptr) {
+        Destruct(the_node->leftChild);
+        the_node->leftChild = nullptr;
+        Destruct(the_node->rightChild);
+        the_node->rightChild = nullptr;
+        delete the_node;
+    }
+};
+
+/* //FIXME create if needed
+Void BinarySearchTree::Remove(string courseId) { 
+    CALL removeNode(PASS the_BST_root, courseId)
+}
+*/
+
+void BinarySearchTree::Search(string courseId) {
+    Node* currentNode = this->the_BST_root;
+        while(currentNode != nullptr) { //As long as current node not empty
+            if(currentNode->course.courseId == courseId) {	 //If found
+                currentNode->Print("prereqs");
+                    return;
+            }
+            else if (courseId < currentNode->course.courseId) { //Else move left is search is < curr
+                //cout << "less than comparison" << endl; //DEBUG print
+                //currentNode->Print(); //DEBUG print
+                if (currentNode->leftChild != nullptr) {
+                    currentNode = currentNode->leftChild;
+                }
+            }
+            else{ //Else move right if search >= curr
+                //cout << "greater than comparison" << endl; //DEBUG print
+                //currentNode->Print(); //DEBUG print
+                currentNode = currentNode->rightChild;
+            }
+        }
+        cout << "Course " << courseId << "not found. " << endl; 	//IF not return from found in while
+        return;
+}
+
+/*  //FIXME create if needed
+NodePtr Void BinarySearchTree::RemoveNode(Node* the_node, string courseId) {
+    IF(the_node == nullpointer) { //if provided node is null
+        SET the_node.leftchild TO removeNode(the_node.leftchild, courseId)
+    }
+    ELSE IF(courseId < the_node.courseId) { //the_node.courseId is more
+        SET the_node.rightchild TO removeNode(the_node.rightchild, courseId)
+    }
+    ELSE{
+                    IF(the_node.leftchild IS null && the_node.rightchild IS null) { //Both null
+                    DELETE the_node
+                    INITIALIZE the_node TO null
+    }
+    ELSE IF(the_node.leftchild != null AND the_node.rightchild == null) { //one null
+    CREATE NodePtr temp = the_node //hold node info
+    SET the_node TO node.leftchild
+    DELETE temp
+    }
+    ELSE IF(the_node.leftchild == null AND the_node.rightchild != null) { //other null
+    CREATE NodePtr temp = the_node //hold node info
+    SET the_node TO node.rightchild
+    DELETE temp
+    }
+    ELSE { //if there are two children
+                    CREATE NodePtr temp = the_node.rightchild //hold node info
+    WHILE(temp.leftchild != null) { //left subtree of right child to the_node
+                    SET temp TO temp.leftchild
+        }
+    }
+    SET the_node.course TO temp.course //pull that info from the leftmost child
+    PASS the_node.rightchild TO removeNode(the_node.rightchild, temp.course.courseId)
+    }
+    RETURN the_node;
+}
+*/
+
+void BinarySearchTree::Insert(BinarySearchTree* tree, Node* thisNode) {
+    //int debugInt = 0; //DEBUG counter
+    if (tree->the_BST_root == nullptr) { //if root is null
+        tree->the_BST_root = thisNode; //new node at root
+        //cout << "thisNode ^ root" << endl; //DEBUG print
+    }
+    else { //IF root not null
+        Node* curr = tree->the_BST_root;
+        while (curr != nullptr) { //traverse to leaves
+            //cout << "traverse entry " << endl; //DEBUG print
+            //cout << "current node = " << curr->course.courseId << endl; //DEBUG print
+            //curr->Print();  //DEBUG print
+            if (thisNode->course.courseId < curr->course.courseId) {
+                //cout << "comparison 1 " << endl; //DEBUG print
+                if (curr->leftChild == nullptr) {
+                    curr->leftChild = thisNode;
+                    curr = nullptr;
+                }
+                else {
+                    //cout << "curr = nullptr hit" << endl; //DEBUG print
+                    curr = curr->leftChild;
+                }
+            }
+            else { //traverse right
+                //debugInt ++; //DEBUG counter
+                //cout << "comparison 2: num times = " << debugInt << endl; //DEBUG print
+                if (curr->rightChild == nullptr) {
+                    curr->rightChild = thisNode;
+                    curr = nullptr;
+                    //cout << "comparison 2a" << endl; //DEBUG print
+                }
+                else {
+                    curr = curr->rightChild;
+                    //cout << "comparison 2b" << endl; //DEBUG print
+                }
+            }
+            //Set left and right child of leaf //HANDLED IN NODE CONSTRUCTOR by default
+                //thisNode->leftChild = nullptr;
+                //thisNode->rightChild = nullptr;
+        }
+        //tree->the_BST_root->Print();  //DEBUG print
+        //thisNode->Print(); //DEBUG print node
+        //cout << endl; //DEBUG print spacer line
+        //cout << "print this node = "; //DEBUG print
+        //thisNode->Print(); //DEBUG print
+        //cout << endl; //DEBUG print
+    }
+}
+
+void BinarySearchTree::PrintCourses(Node* node) {
+
+    //Traverse and print entire tree
+    if (node == nullptr) {
+        return;
+    }
+    //cout << "print current node = " << &node << " "; //DEBUG print
+    //node->Print(); //DEBUG print
+    //cout << endl; //DEBUG print
+
+    PrintCourses(node->leftChild); //recurse left
+    node->Print("neat"); //print without prereqs
+    PrintCourses(node->rightChild); //recurse right
+};
+
+void Load(string filename, BinarySearchTree* BST) {
+    ifstream file(filename);
+    if (filename.find(".csv", (filename.length() - 5)) != std::string::npos) { //VALIDATE filename.type
+        //cout << "Is a CSV" << endl; //Success of filetype
+        if (file.is_open()) { //IF file open
+            cout << "file open." << endl; //Success message
+
+            int incrementNumber; //counter
+            string line, word;
+
+            while (getline(file, line)) { //while line to get
+
+
+                incrementNumber = 0;
+                Node* thisNode = new Node();
+                stringstream str(line);
+                //cout << "line= " << line << endl; //DEBUG print line
+
+                while (incrementNumber < 2) {
+                    getline(str, word, ',');
+                    if (incrementNumber == 0) {
+                        thisNode->course.courseId = word;
+                        //cout << "courseId= " << word << endl; //DEBUG print word
+                    }
+                    else {
+                        thisNode->course.courseName = word;
+                        //cout << "courseName= " << word << endl; //DEBUG print word
+                    }
+                    //cout << "incrementNumber " << incrementNumber << endl; //DEBUG Check incrementNumber
+                    incrementNumber++;
+                }
+                while (getline(str, word, ',')) {
+                    thisNode->course.prereqs.push_back(word);
+                    //cout << "Prereq= " << word << endl; //DEBUG print word
+                }
+                //thisNode->Print(); //DEBUG print node
+                //cout << endl; //DEBUG print spacer line
+
+                BST->Insert(BST, thisNode);
+                str.clear(); //Get rid of any stream errors
+            }
+        }
+        else {
+            cout << "File read error. " << endl;
+            return;
+        }
+    }
+    else {
+        cout << "Filetype error. Ensure you provide a .csv file. " << endl;
+        return;
+    }
+
+}
+
+
+void main() {
+
+    BinarySearchTree* BST = new BinarySearchTree();
+
+    string otherFilename, otherCourseId;
+    string defaultCourseId = "CSCI400";
+    string defaultFilename = "ABCUInput.csv";
+    
+    int input = 0;
+    while (input != 9) { //DISPLAY menu while not exit condition
+        cout << "Option 1: Load file" << endl;
+        cout << "Option 2 : Print course by ID number" << endl;
+        cout << "Option 3 : Print course list" << endl;
+        cout << "Option 9 : Exit" << endl;
+        cout << "make selection: ";
+        cin >> input;
+
+        switch (input) {
+        case 1: //take file name
+            cout << endl;
+            cout << "Type file name to read or type 'default': ";
+            cin >> otherFilename;
+            //defaultFilename += ".csv"; //append .csv to filename
+            if (otherFilename != "default") {
+                cout << "Loading: " << otherFilename << endl;
+                Load(otherFilename, BST);
+            }
+            else {
+                cout << "Loading: " << defaultFilename << endl;
+                Load(defaultFilename, BST);
+            }
+            cout << endl;
+            break;
+
+        case 2:
+            cout << endl;
+            cout << "Enter course Id to print or type 'default' :" << endl;
+            cin >> otherCourseId;
+            if (otherCourseId != "default") {
+                cout << "Searching for " << otherCourseId << endl;
+                BST->Search(otherCourseId);
+            }
+            else {
+                cout << "Searching for " << defaultCourseId << endl;
+                BST->Search(defaultCourseId);
+            }
+            cout << endl;
+            break;
+
+        case 3:
+            cout << endl;
+            BST->PrintCourses(BST->the_BST_root); //CALL alphanumeric low->high print recurse, start at root    	
+            cout << endl;
+            break;
+        
+        case 9:
+            cout << "Exiting program." << endl;
+            break;
+        
+        default:
+            cout << endl;
+            cout << input << " is not a valid option, please try again." << endl;
+            cout << endl;
+            break;
+        }
+    }
+    
+ 
+       
+}
