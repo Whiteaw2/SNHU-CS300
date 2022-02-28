@@ -1,0 +1,61 @@
+Project One analysis //FIXME as computations are most likely incorrect
+
+
+Recommendation: (which data structure I plan to use in my code)
+I would ultimately recommend that the program to track, manage, and access classes and their prerequisites make use of a binary search tree.
+	
+Justification: (based on Big O and analysis of all three)
+Based on the Big O analysis and general analysis on the three data structures, as well as the practical use of the program, a binary search tree offers increased functionality and intrinsic sorting that is generally better than the other abstract data types. It can be assumed by the instructions that two of the most common operations performed for the guidance counselors are searching for a specific course, as well as printing an alphanumerically sorted list of all courses. The complexity of such operations in binary search trees is at best O(logN) and at worst O(N), which outweighs the benefits of other data types especially when the dataset is infinitely large. The use of breadth-first or depth-first searches could potentially return all courses above or below a given course quickly. BSTs also allow us to search for a range easily as in the case of a guidance counselor wanting to look at a specific subset of a student’s career. Though there is a disadvantage in complexity when inserting or deleting of parents of which two leaves already exist, we can reason from the instructions that the need to add or remove classes from a career path is less frequently performed.
+
+
+
+
+
+
+—------------------------------------------------------ [ Vector ] —-------------------------------------------------
+
+Advantages: 
+Overall 
+Search 
+Length because the vector memory addresses are contiguous the length property can be determined in constant time with the last index +1.
+Indexing as each memory location can be addressed randomly without traversal, the vector offers constant time access.
+Insertions as vectors are dynamic list data types, they do not need to be resized for every insertion, but occasionally will require automatic resizing. Also arbitrary insertions will result in linearly shifting all subsequent indices.
+Removal does not cause resizing.
+
+Disadvantages:
+Overall 
+Search is O(N) complexity for vectors in the worst case as the algorithm must linearly probe the entire list.
+Insertions occasionally, the insertion will not be possible as the size of the vector will match the size of the indices available prior to insertion, in these cases, the entire vector must be recreated with a larger size and copied over before insertion can occur. Also insertions don’t result in an ordered list.
+Removal because the vector is stored in sequential memory, removal of arbitrary indices (not from back) result in the worst-case complexity of O(N) due to  traversal and movement of all other indices.
+
+---------------------------------------------------- [ Hash Table] —-------------------------------------------------
+
+
+Advantages: 
+Overall without any collisions, buckets of the hash table have a depth of only 1 and therefore insertion, removal, and searching are of complexity O(1) in the best case.
+Search results in lower complexity than a list alone and could be O(1)
+Insertions various hashing algorithms decrease the likelihood of frequent collisions, resulting in lower complexity for all operations versus lists.
+
+Disadvantages:
+Search using chaining provides diminishing returns as bucket size increases as the hash algorithm finds only the head of the bucket, then must use linear probing on the subsequent bucket list. At worst, a search is O(N) when every insertion resulted in a collision. 
+Insertions using chaining
+The hash function dictates the effectiveness of insertions (limiting collisions) and other functions such as search and removal, which may result in either large table sizes in direct hashing or in many collisions.
+Resize operations when the load factor of a table is too high require the initialization and population of a larger hash table as well as rehashing all table values, resulting in a complexity of O(N).
+Removal this function relies on search and in the worst case could result in a complexity of O(N) in cases where each insertion caused a collision.
+Sorting this data structure does not implicitly allow for sorting, and a computationally intensive process would either need to be performed before insertion, or performed as a secondary function, requiring the creation of a list of the keys that could then be sorted, resulting in a best case complexity of O(N).
+
+
+---------------------------------------------------- [ Binary Tree] —-------------------------------------------------
+
+
+Advantages: 
+Search operations may be faster than searching in linear searches as they occur in at most O(logN) complexity. 
+Insertions result in ordered lists.
+
+Disadvantages:
+Insertions result in a worst case complexity of O(N) if the tree has only one branch path with a total of N number of levels. This occurs when a BST is populated with a pre-ordered list.
+Removal operations are more computationally intensive than other methods and result in a worst case of O(N). If the algorithm must remove a parent with two child nodes, it must copy the child node’s successor into the parent node and delete the leaf.
+
+
+
+
